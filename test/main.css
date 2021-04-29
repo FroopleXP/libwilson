@@ -1,0 +1,26 @@
+body, html {
+    margin: 0px;
+    padding: 0px;
+}
+
+#statusBar {
+    width: 100%;
+    background-color: yellow;
+    height: auto;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+#statusBar > p {
+    padding: 5px 0px;
+    margin: 0px;
+}
+
+.screenContainer {
+    margin: 10px;
+}
+
+footer {
+    text-align: center;
+}
