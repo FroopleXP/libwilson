@@ -14,7 +14,7 @@ const StatusBar = function (parentId) {
     // Spinner
     this._elSpinner = document.createElement("img");
     this._elSpinner.className = "spinner";
-    this._elSpinner.src = "images/small_loader_xs.gif";
+    this._elSpinner.src = "images/small_loader.gif";
 
     // Text display
     this._elP = document.createElement("p");

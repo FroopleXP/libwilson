@@ -9,14 +9,15 @@ body, html {
 #statusBar {
     padding: 10px;
     width: 100%;
-    height: auto;
-    text-align: center;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #statusBar > p {
     padding: 0px;
     margin: 0px;
-    display: inline-block;
 }
 
 #statusBar > a {
@@ -30,7 +31,7 @@ body, html {
 }
 
 #statusBar > .spinner {
-    height: 9px;
+    height: 10px;
     margin: 0px 10px;
 }
 
