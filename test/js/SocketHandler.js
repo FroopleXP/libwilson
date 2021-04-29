@@ -84,6 +84,8 @@ SocketHandler.prototype._handleSocketOnOpen = function () {
 
 SocketHandler.prototype._handleSocketOnClose = function (e) {
 
+    this._setStatus(CLIENT_STATES.NOT_CONNECTED);
+
     // If the connection was unexpected, try to reconnect
     if (!e.reason || e.code === 1006) {
         this._retryConnection();

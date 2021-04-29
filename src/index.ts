@@ -63,9 +63,9 @@ async function cleanup() {
     console.info("Cleaning up...");
 
     // Close all connected clients with a reason
-    wss.clients.forEach((socket) => {
-        socket.close(1011, "Server closing down")
-    });
+    // wss.clients.forEach((socket) => {
+    //     socket.close(1011, "Server closing down")
+    // });
 
     // Close down websocket serber
     wss.close();

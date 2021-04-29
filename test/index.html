@@ -9,13 +9,9 @@
     <title>Wilson</title>
 </head>
 
-<body>
+<body id="app">
 
     <noscript>No JavaScript huh? Well that's just not okay. Please reenable to use this app.</noscript>
-
-    <div id="statusBar">
-        <p id="statusBar_marquee">Loading...</p>
-    </div>
 
     <div class="screenContainer">
         <fieldset>
@@ -43,10 +39,16 @@
         <p>Made by Froople - <a href="https://froople.net">froople.net</a></p>
     </footer>
 
+    <!-- Classes -->
     <script src="js/Logger.js"></script>
     <script src="js/StateManager.js"></script>
     <script src="js/SocketHandler.js"></script>
     <script src="js/WilsonClient.js"></script>
+
+    <!-- Components -->
+    <script src="js/components/StatusBar.js"></script>
+
+    <!-- Main -->
     <script src="js/main.js"></script>
 
 </body>

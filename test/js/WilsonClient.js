@@ -10,8 +10,10 @@ const WilsonClient = function (serverUrl) {
 
 }
 
-WilsonClient.prototype._onSocketStatus = function (event) {
-    console.log(event);
+WilsonClient.prototype._onSocketStatus = function (_status) {
+    this._eventListeners[this._events.indexOf("status")].forEach(function (listener) {
+        listener(_status);
+    })
 }
 
 WilsonClient.prototype._onSocketMessage = function (event) {
@@ -22,5 +24,9 @@ WilsonClient.prototype.on = function (event, cb) {
     if (!event || !cb || typeof cb !== "function") return;
     if (!this._events.includes(event)) return;
     this._eventListeners[this._events.indexOf(event)].push(cb);
+}
+
+WilsonClient.prototype.retry = function () {
+    this._socketHandler.retryConnection();
 }
 
