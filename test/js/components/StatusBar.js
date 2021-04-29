@@ -2,67 +2,84 @@ const StatusBar = function (parentId) {
 
     this._parent = document.getElementById(parentId);
 
-    console.log(this._parent);
+    // Props
+    this._props = {
+        status: "",
+    }
 
     // Container
     this._elDiv = document.createElement("div");
-    this._elDiv.style.width = "100%";
-    this._elDiv.style.height = "auto";
-    this._elDiv.style.textAlign = "center";
-    this._elDiv.style.padding = "5px";
-    this._elDiv.style.backgroundColor = "grey";
+    this._elDiv.id = "statusBar";
+
+    // Spinner
+    this._elSpinner = document.createElement("img");
+    this._elSpinner.className = "spinner";
+    this._elSpinner.src = "images/small_loader_xs.gif";
 
     // Text display
     this._elP = document.createElement("p");
     this._elP.innerText = "Loading...";
-    this._elP.style.padding = "0px";
-    this._elP.style.margin = "0px";
-    this._elP.style.fontWeight = "bold";
 
-    // Retry button
-    this._elButton = document.createElement("button");
+    // Retry link
+    this._elButton = document.createElement("a");
     this._elButton.innerText = "Retry";
-    this._elButton.style.marginLeft = "5px";
-    this._elButton.setAttribute("type", "submit");
+
+    // Render to parent
+    this._elDiv.appendChild(this._elSpinner);
+    this._elDiv.appendChild(this._elP);
+    this._elDiv.appendChild(this._elButton);
+    this._parent.appendChild(this._elDiv);
 
 }
 
-StatusBar.prototype.render = function (status, retryCb) {
+StatusBar.prototype.setRetryCallback = function (retryCallback) {
+    this._elButton.addEventListener("click", retryCallback);
+}
 
-    console.log("I've been called!");
+StatusBar.prototype.setStatus = function (status) {
+    this._props.status = status;
+}
+
+StatusBar.prototype.render = function () {
+
+    this._elSpinner.hidden = true;
 
     // Update display based on socket status
-    switch (status) {
+    switch (this._props.status) {
 
         case CLIENT_STATES.CONNECTED:
+            this._elDiv.className = "statusConnected";
             this._elP.innerText = "Connected";
+            this._elButton.hidden = true;
             break;
 
         case CLIENT_STATES.CONNECTING:
+            this._elDiv.className = "statusConnecting";
             this._elP.innerText = "Connecting...";
+            this._elButton.hidden = true;
+            this._elSpinner.hidden = false;
             break;
 
         case CLIENT_STATES.FAILED_TO_CONNECT:
-            this._elP.innerText = "Failed to connect";
-            this._elButton.addEventListener("click", retryCb);
-            this._elP.appendChild(this._elButton);
+            this._elDiv.className = "statusFailedToConnect";
+            this._elP.innerText = "Failed to connect.";
+            this._elButton.hidden = false;
             break;
 
         case CLIENT_STATES.NOT_CONNECTED:
+            this._elDiv.className = "statusNotConnected";
             this._elP.innerText = "Not connected";
+            this._elButton.hidden = false;
             break;
 
         case CLIENT_STATES.RETRYING_TO_CONNECT:
-            this._elP.innerText = "Retrying connection...";
+            this._elDiv.className = "statusConnecting";
+            this._elP.innerText = "Trying to connect...";
+            this._elSpinner.hidden = false;
+            this._elButton.hidden = true;
             break;
 
     }
-
-    this._parent.appendChild(
-        this._elDiv.appendChild(
-            this._elP
-        )
-    )
 
 }
 

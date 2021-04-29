@@ -9,8 +9,8 @@ const CLIENT_STATES = {
 const SocketHandler = function (serverUrl, debug) {
 
     // Client constants
-    this._MAX_CONNECTION_RETRIES = 15;
-    this._CONNECTION_RETRY_INTERVAL_MS = 5000; // 15 tries at 5 secs = 1min 15s timeout
+    this._MAX_CONNECTION_RETRIES = 2;
+    this._CONNECTION_RETRY_INTERVAL_MS = 1000; // 15 tries at 5 secs = 1min 15s timeout
     this._MAX_EVENT_LISTENERS = 5;
 
     this._serverUrl = serverUrl;

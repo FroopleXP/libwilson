@@ -1,20 +1,54 @@
 body, html {
     margin: 0px;
     padding: 0px;
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 8px;
+    font-size: 0.9em;
 }
 
 #statusBar {
+    padding: 10px;
     width: 100%;
-    background-color: yellow;
     height: auto;
-    font-weight: bold;
-    color: white;
     text-align: center;
 }
 
 #statusBar > p {
-    padding: 5px 0px;
+    padding: 0px;
     margin: 0px;
+    display: inline-block;
+}
+
+#statusBar > a {
+    margin-left: 2px;
+    color: white;
+    text-decoration: underline;
+}
+
+#statusBar > a:hover {
+    cursor: pointer;
+}
+
+#statusBar > .spinner {
+    height: 9px;
+    margin: 0px 10px;
+}
+
+#statusBar.statusConnected {
+    background-color: #42f584;
+}
+
+#statusBar.statusNotConnected {
+    background-color: #42d4f5;
+}
+
+#statusBar.statusFailedToConnect {
+    background-color: #f5425a;
+    color: white;
+}
+
+#statusBar.statusConnecting {
+    background-color: #42d4f5;
 }
 
 .screenContainer {

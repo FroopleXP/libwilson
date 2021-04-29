@@ -5,13 +5,15 @@ const wilsonClient = new WilsonClient("ws://localhost:9000");
 
 const statusBar = new StatusBar("app");
 
-function handleRetryButtonClick(e) {
+statusBar.setRetryCallback(function (e) {
+    console.log("What?")
     e.preventDefault();
     wilsonClient.retry();
-}
+});
 
 wilsonClient.on("status", function (_status) {
-    statusBar.render(_status.status, handleRetryButtonClick);
+    statusBar.setStatus(_status.status);
+    statusBar.render();
 });
 
 
