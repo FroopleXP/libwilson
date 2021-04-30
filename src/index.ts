@@ -10,7 +10,9 @@ const serverUuid: string = uuidv4();
 const wssPort: number = (process.env.WSS_PORT) ? parseInt(process.env.WSS_PORT) : 9000;
 
 // --- AMQP connection
-let amqpChannel: amqplib.Channel;
+const AMQP_EXCHANGE: string = "messaging";
+let amqpRxChannel: amqplib.Channel;
+let amqpTxChannel: amqplib.Channel;
 
 // --- Creating Redis connection
 const redisClient: RedisClient = new RedisClient({ host: "127.0.0.1", connect_timeout: 10000 });
@@ -26,14 +28,34 @@ async function startAmqpConnection(opts: amqplib.Options.Connect) {
 
     const amqpConnection: amqplib.Connection = await amqplib.connect(opts);
 
-    amqpChannel = await amqpConnection.createChannel();
-    await amqpChannel.bindQueue("messages", "messaging", serverUuid);
+    // Creating Tx and Rx channels
+    amqpRxChannel = await amqpConnection.createChannel();
+    amqpTxChannel = await amqpConnection.createChannel();
 
-    await amqpChannel.consume("messages", (msg) => {
-        console.log(msg?.content.toString())
+    // --- RX
+    // Connect channel to the exhange
+    await amqpRxChannel.assertExchange(AMQP_EXCHANGE, 'direct', {
+        durable: true
     });
 
-    console.log("Connected to RabbitMQ");
+    // Connect to the queue for this server
+    const rxQueue: amqplib.Replies.AssertQueue = await amqpRxChannel.assertQueue("", {
+        exclusive: true
+    });
+
+    // Bind this queue to the exchange
+    await amqpRxChannel.bindQueue(rxQueue.queue, AMQP_EXCHANGE, serverUuid);
+
+    // Listen for messages on this queue
+    amqpRxChannel.consume(rxQueue.queue, (message) => {
+        console.log(`New message for ${serverUuid}: ${message?.content.toString()}`);
+    });
+
+    // --- TX
+    // Connect channel to exchange
+    await amqpTxChannel.assertExchange(AMQP_EXCHANGE, 'direct', {
+        durable: true
+    });
 
 }
 
@@ -67,14 +89,15 @@ async function cleanup() {
     //     socket.close(1011, "Server closing down")
     // });
 
-    // Close down websocket serber
+    // Close down websocket server
     wss.close();
 
     // Unbind server id from queue
-    await amqpChannel.unbindQueue("messages", "messaging", serverUuid);
+    // await amqpRxChannel.unbindQueue(amqpRxChannel.get, "messaging", serverUuid);
 
-    // Close Rabbit connection
-    await amqpChannel.close();
+    // Close Rabbit channels
+    await amqpRxChannel.close();
+    await amqpTxChannel.close();
 
 }
 
