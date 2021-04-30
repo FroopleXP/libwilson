@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
     margin: 0px;
     padding: 0px;
     font-family: Helvetica, Arial, sans-serif;
@@ -13,6 +14,7 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
 }
 
 #statusBar > p {
@@ -22,7 +24,6 @@ body, html {
 
 #statusBar > a {
     margin-left: 2px;
-    color: white;
     text-decoration: underline;
 }
 
@@ -40,16 +41,15 @@ body, html {
 }
 
 #statusBar.statusNotConnected {
-    background-color: #42d4f5;
+    background-color: #3489eb;
 }
 
 #statusBar.statusFailedToConnect {
     background-color: #f5425a;
-    color: white;
 }
 
 #statusBar.statusConnecting {
-    background-color: #42d4f5;
+    background-color: #3489eb;
 }
 
 .screenContainer {

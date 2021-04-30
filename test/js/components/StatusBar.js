@@ -43,6 +43,7 @@ StatusBar.prototype.setStatus = function (status) {
 StatusBar.prototype.render = function () {
 
     this._elSpinner.hidden = true;
+    this._elButton.hidden = true;
 
     // Update display based on socket status
     switch (this._props.status) {
@@ -50,13 +51,11 @@ StatusBar.prototype.render = function () {
         case CLIENT_STATES.CONNECTED:
             this._elDiv.className = "statusConnected";
             this._elP.innerText = "Connected";
-            this._elButton.hidden = true;
             break;
 
         case CLIENT_STATES.CONNECTING:
             this._elDiv.className = "statusConnecting";
             this._elP.innerText = "Connecting...";
-            this._elButton.hidden = true;
             this._elSpinner.hidden = false;
             break;
 
@@ -69,14 +68,12 @@ StatusBar.prototype.render = function () {
         case CLIENT_STATES.NOT_CONNECTED:
             this._elDiv.className = "statusNotConnected";
             this._elP.innerText = "Not connected";
-            this._elButton.hidden = false;
             break;
 
         case CLIENT_STATES.RETRYING_TO_CONNECT:
             this._elDiv.className = "statusConnecting";
             this._elP.innerText = "Trying to connect...";
             this._elSpinner.hidden = false;
-            this._elButton.hidden = true;
             break;
 
     }
