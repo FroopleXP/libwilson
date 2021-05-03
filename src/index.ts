@@ -24,7 +24,7 @@ redisClient.on("error", (err: Error) => {
 // --- Creating WSS
 const wss: ws.Server = new ws.Server({ port: wssPort });
 
-const wilsonServer: WilsonServer = new WilsonServer({ server: wss, name: serverName, uuid: serverUuid });
+const wilsonServer: WilsonServer = new WilsonServer({ server: wss, name: serverName });
 
 async function startAmqpConnection(opts: amqplib.Options.Connect) {
 

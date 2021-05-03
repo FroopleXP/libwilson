@@ -1,4 +1,6 @@
+import EventEmitter from "events";
 import { Server } from "ws";
+import WilsonClient from "./domain/entities/WilsonClient";
 import EClientAction from "./enums/EClientAction";
 import EServerAction from "./enums/EServerAction";
 import jsonStringToClientEvent from "./mappers/jsonStringToClientEvent";
@@ -7,46 +9,37 @@ import ServerEvent from "./types/ServerEvent";
 
 export interface IWilsonServerProps {
     server: Server,
-    name: string,
-    uuid: string
+    name: string
 }
 
 class WilsonServer {
 
-    private wss: Server;
-    private name: string;
-    private uuid: string;
+    private readonly wss: Server;
+    private readonly name: string;
+    private connectedClients: WilsonClient[];
 
     constructor(deps: IWilsonServerProps) {
+
         this.name = deps.name;
-        this.uuid = deps.uuid;
-        this.wss = deps.server
+        this.wss = deps.server;
+        this.connectedClients = [];
+
         this.wss.on("connection", this.handleOnClientConnect.bind(this));
+
     }
 
-    private handleClientMessage(event: MessageEvent<string>): void {
-
-        const clientEvent: ClientEvent = jsonStringToClientEvent(event.data);
-
-        switch (clientEvent.action) {
-
-            case EClientAction.AUTHENTICATE_USER:
-                console.log(`Auth Event: Username = ${clientEvent.payload.username}, Password = ${clientEvent.payload.password}`);
-                break;
-
-            case EClientAction.NEW_MESSAGE:
-                console.log(`New Message Event: `)
-
-            default:
-                console.error(`Action ${clientEvent.action} not valid`)
-
-        }
-
+    private handleIncomingClientEvent(client: WilsonClient, event: ClientEvent): void {
+        console.log(`New client event ${event.action}`);
     }
 
     private handleOnClientConnect(ws: WebSocket): void {
 
-        ws.onmessage = this.handleClientMessage;
+        // On a client connect, create a new WilsonClient
+        const newClient: WilsonClient = new WilsonClient(ws);
+
+        newClient.on("event", this.handleIncomingClientEvent);
+
+        this.connectedClients.push(newClient);
 
         // On connect, send welcome message
         const serverWelcomeEvent: ServerEvent = {
@@ -56,7 +49,7 @@ class WilsonServer {
             }
         };
 
-        ws.send(JSON.stringify(serverWelcomeEvent));
+        newClient.sendEvent(serverWelcomeEvent);
 
     }
 

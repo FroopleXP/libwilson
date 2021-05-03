@@ -27,6 +27,16 @@ mockMessageButton.addEventListener("click", function (e) {
 
 body.appendChild(mockMessageButton);
 
+const mockBadMessageButton = document.createElement("button");
+mockBadMessageButton.innerText = "Send BAD Message";
+mockBadMessageButton.type = "submit";
+mockBadMessageButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    wilsonClient.sendBadMessage();
+});
+
+body.appendChild(mockBadMessageButton);
+
 statusBar.setRetryCallback(function (e) {
     console.log("What?")
     e.preventDefault();

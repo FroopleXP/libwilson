@@ -95,6 +95,15 @@ WilsonClient.prototype.sendMessage = function (userTo, message) {
 
 }
 
+// TODO: Remove, this is just for testing...
+WilsonClient.prototype.sendBadMessage = function () {
+
+    const event = "BAD_MESSUGE";
+
+    this._socketHandler.send(event);
+
+}
+
 WilsonClient.prototype.retry = function () {
     this._socketHandler.retryConnection();
 }
