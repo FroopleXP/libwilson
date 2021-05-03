@@ -78,6 +78,23 @@ WilsonClient.prototype.authenticate = function (username, password) {
 
 }
 
+WilsonClient.prototype.sendMessage = function (userTo, message) {
+
+    const event = {
+        action: "NEW_MESSAGE",
+        payload: {
+            authentication: {
+                token: "1234-5678-ABCDEF"
+            },
+            message: message,
+            to: userTo
+        }
+    }
+
+    this._socketHandler.send(JSON.stringify(event));
+
+}
+
 WilsonClient.prototype.retry = function () {
     this._socketHandler.retryConnection();
 }

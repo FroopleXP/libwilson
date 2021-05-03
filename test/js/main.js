@@ -17,6 +17,16 @@ mockAuthButton.addEventListener("click", function (e) {
 
 body.appendChild(mockAuthButton);
 
+const mockMessageButton = document.createElement("button");
+mockMessageButton.innerText = "Send Message";
+mockMessageButton.type = "submit";
+mockMessageButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    wilsonClient.sendMessage("froople", "Hi there, are you online?");
+});
+
+body.appendChild(mockMessageButton);
+
 statusBar.setRetryCallback(function (e) {
     console.log("What?")
     e.preventDefault();

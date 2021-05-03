@@ -3,6 +3,7 @@ import EClientAction from "./enums/EClientAction";
 import EServerAction from "./enums/EServerAction";
 import jsonStringToClientEvent from "./mappers/jsonStringToClientEvent";
 import ClientEvent from "./types/ClientEvent";
+import ServerEvent from "./types/ServerEvent";
 
 export interface IWilsonServerProps {
     server: Server,
@@ -33,6 +34,9 @@ class WilsonServer {
                 console.log(`Auth Event: Username = ${clientEvent.payload.username}, Password = ${clientEvent.payload.password}`);
                 break;
 
+            case EClientAction.NEW_MESSAGE:
+                console.log(`New Message Event: `)
+
             default:
                 console.error(`Action ${clientEvent.action} not valid`)
 
@@ -45,7 +49,7 @@ class WilsonServer {
         ws.onmessage = this.handleClientMessage;
 
         // On connect, send welcome message
-        const serverWelcomeEvent: any = {
+        const serverWelcomeEvent: ServerEvent = {
             action: EServerAction.WELCOME,
             payload: {
                 server_name: this.name
