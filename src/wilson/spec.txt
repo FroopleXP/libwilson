@@ -1,0 +1,35 @@
+Wilson client events
+
+interface IAuthenticationHeaders {
+    jwt: string;
+}
+
+enum EClientAction {
+    NEW_MESSAGE = "NEW_MESSAGE",
+    AUTHENTICATE_USER = "AUTHENTICATE_USER",
+    REGISTER_USER = "REGISTER_USER",
+}
+
+interface IClientNewMessagePayload {
+    auth: IAuthenticationHeaders,
+    message: string;
+    user_to: string;
+}
+
+interface IClientEvent<T> {
+    action: EClientAction,
+    payload: T
+}
+
+const newMessageEvent: IClientEvent<IClientNewMessagePayload> = {
+    action: EClientAction.NEW_MESSAGE,
+    payload: {
+        auth: {
+            jwt: "xxxx-xxxx-xxxxxxxx"
+        },
+        message: "Hi, there!",
+        user_to: "johnsdailydigits"
+    }
+}
+
+

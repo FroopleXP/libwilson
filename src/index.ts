@@ -2,11 +2,11 @@ import { RedisClient } from "redis";
 import ws from "ws";
 import { v4 as uuidv4 } from "uuid";
 import amqplib from "amqplib";
-
-import IWebSocketClientMessage from "./domain/interfaces/IWebSocketClientMessage";
-import WebSocketClientAction from "./domain/enums/WebSocketClientAction";
+import { starWars, uniqueNamesGenerator } from "unique-names-generator";
+import WilsonServer from "./wilson/WilsonServer";
 
 const serverUuid: string = uuidv4();
+const serverName: string = uniqueNamesGenerator({ dictionaries: [starWars], length: 1 });
 const wssPort: number = (process.env.WSS_PORT) ? parseInt(process.env.WSS_PORT) : 9000;
 
 // --- AMQP connection
@@ -23,6 +23,8 @@ redisClient.on("error", (err: Error) => {
 
 // --- Creating WSS
 const wss: ws.Server = new ws.Server({ port: wssPort });
+
+const wilsonServer: WilsonServer = new WilsonServer({ server: wss, name: serverName, uuid: serverUuid });
 
 async function startAmqpConnection(opts: amqplib.Options.Connect) {
 
@@ -63,10 +65,11 @@ async function startServer() {
 
     try {
 
-        console.log(`WSS Port: ${wssPort} | Server UUID: ${serverUuid}`);
+        console.log(`WSS Port: ${wssPort} | Server Name: ${serverName} (${serverUuid})`);
 
         // Start AMQP
         await startAmqpConnection({
+            vhost: "wilson",
             hostname: "localhost",
             username: "guest",
             password: "guest",
@@ -82,18 +85,8 @@ async function startServer() {
 
 async function cleanup() {
 
-    console.info("Cleaning up...");
-
-    // Close all connected clients with a reason
-    // wss.clients.forEach((socket) => {
-    //     socket.close(1011, "Server closing down")
-    // });
-
     // Close down websocket server
     wss.close();
-
-    // Unbind server id from queue
-    // await amqpRxChannel.unbindQueue(amqpRxChannel.get, "messaging", serverUuid);
 
     // Close Rabbit channels
     await amqpRxChannel.close();
@@ -132,25 +125,6 @@ async function registerUser(username: string): Promise<void> {
     })
 
 }
-
-wss.on("connection", (ws: WebSocket) => {
-
-    ws.onmessage = (event) => {
-
-        // Parse JSON
-        const parsed: any = JSON.parse(event.data);
-        const message: IWebSocketClientMessage = { action: parsed.action, payload: parsed.payload };
-
-        switch (message.action) {
-            case WebSocketClientAction.AUTHENTICATE:
-                registerUser(message.payload.username).then().catch((err) => {
-                    ws.close(1008, err.message);
-                });
-        }
-
-    }
-
-});
 
 // --- Start server
 startServer();

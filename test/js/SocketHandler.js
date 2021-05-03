@@ -70,7 +70,9 @@ SocketHandler.prototype._connect = function (serverUrl) {
 }
 
 SocketHandler.prototype._handleSocketOnMessage = function (event) {
-
+    this._eventListeners[this._events.indexOf("message")].forEach(function (listener) {
+        listener(event);
+    })
 }
 
 SocketHandler.prototype._handleSocketOnOpen = function () {
@@ -126,6 +128,11 @@ SocketHandler.prototype.on = function (event, cb) {
         this._eventListeners[this._events.indexOf(event)].push(cb);
     }
 
+}
+
+SocketHandler.prototype.send = function (message) {
+    if (this._getStatus() !== CLIENT_STATES.CONNECTED) return;
+    this._activeSocket.send(message);
 }
 
 SocketHandler.prototype.retryConnection = function () {
