@@ -12,7 +12,7 @@ const WilsonClient = function (serverUrl) {
 
     this._socketHandler = new SocketHandler(serverUrl, true);
     this._socketHandler.on("message", this._onSocketMessage.bind(this));
-    this._socketHandler.on("status", this._onSocketStatusUpdate.bind(this));
+    this._socketHandler.on("update", this._onSocketStatusUpdate.bind(this));
 
     this._logger = new Logger("wilson client", true);
 

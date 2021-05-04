@@ -18,8 +18,7 @@ const SocketHandler = function (serverUrl, debug) {
     this._activeSocket = null;
     this._connectionRetries = 0;
 
-    this._events = ["status", "message"];
-    this._eventListeners = [[], []];
+    this._eventEmitter = new EventEmitter();
 
     // Creating a state manager
     this._stateManager = new StateManager({
@@ -28,13 +27,7 @@ const SocketHandler = function (serverUrl, debug) {
 
     // When the state changes, update listeners
     this._stateManager.on("update", function (_update) {
-
-        if (!this._eventListeners[this._events.indexOf("status")].length) return;
-
-        this._eventListeners[this._events.indexOf("status")].forEach(function (listener) {
-            listener(_update);
-        });
-
+        this._eventEmitter.emit("update", _update);
     }.bind(this));
 
     // Creating inital connection
@@ -69,10 +62,8 @@ SocketHandler.prototype._connect = function (serverUrl) {
 
 }
 
-SocketHandler.prototype._handleSocketOnMessage = function (event) {
-    this._eventListeners[this._events.indexOf("message")].forEach(function (listener) {
-        listener(event);
-    })
+SocketHandler.prototype._handleSocketOnMessage = function (message) {
+    this._eventEmitter.emit("message", message);
 }
 
 SocketHandler.prototype._handleSocketOnOpen = function () {
@@ -123,14 +114,7 @@ SocketHandler.prototype._handleSocketOnError = function (e) {
 }
 
 SocketHandler.prototype.on = function (event, cb) {
-
-    if (!event || !cb || typeof cb !== "function") return;
-    if (!this._events.includes(event)) return;
-
-    if (this._eventListeners[this._events.indexOf(event)].length < this._MAX_EVENT_LISTENERS) {
-        this._eventListeners[this._events.indexOf(event)].push(cb);
-    }
-
+    this._eventEmitter.on(event, cb);
 }
 
 SocketHandler.prototype.send = function (message) {
