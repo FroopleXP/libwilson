@@ -1,20 +1,11 @@
 const StateManager = function (init) {
-
-    this._MAX_LISTENERS = 5;
-
     this._state = Object.assign({}, init);
-
     this._stateKeys = Object.keys(this._state);
-    this._listeners = [];
-
+    this._eventEmitter = new EventEmitter();
 }
 
-StateManager.prototype.onUpdate = function (cb) {
-
-    if (!cb || typeof cb !== "function") return;
-
-    if (this._listeners.length >= this._MAX_LISTENERS) return;
-    this._listeners.push(cb);
+StateManager.prototype.on = function (event, cb) {
+    this._eventEmitter.on(event, cb);
 }
 
 StateManager.prototype.update = function (key, value) {
@@ -29,10 +20,8 @@ StateManager.prototype.update = function (key, value) {
     cpState[key] = value;
     this._state = cpState;
 
-    if (!this._listeners.length) return;
-
     // Calling listeners
-    this._listeners.forEach(function (cb) { cb(Object.freeze(this._state)); }.bind(this));
+    this._eventEmitter.emit("update", Object.freeze(this._state));
 
 }
 

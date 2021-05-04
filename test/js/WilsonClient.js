@@ -18,7 +18,7 @@ const WilsonClient = function (serverUrl) {
 
     this._eventEmitter = new EventEmitter();
 
-    this._state.onUpdate(function () {
+    this._state.on("update", function () {
         this._eventEmitter.emit("status", { status: this._state.get("socket").status });
     }.bind(this));
 

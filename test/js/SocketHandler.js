@@ -27,7 +27,7 @@ const SocketHandler = function (serverUrl, debug) {
     });
 
     // When the state changes, update listeners
-    this._stateManager.onUpdate(function (_update) {
+    this._stateManager.on("update", function (_update) {
 
         if (!this._eventListeners[this._events.indexOf("status")].length) return;
 
