@@ -16,12 +16,10 @@ const WilsonClient = function (serverUrl) {
 
     this._logger = new Logger("wilson client", true);
 
-    // TODO: I've written this a few times, maybe port into its own package
-    this._events = ["message", "error", "status"];
-    this._eventListeners = [[], [], []];
+    this._eventEmitter = new EventEmitter();
 
     this._state.onUpdate(function () {
-        this._callEventListeners("status", { status: this._state.get("socket").status });
+        this._eventEmitter.emit("status", { status: this._state.get("socket").status });
     }.bind(this));
 
 }
@@ -30,17 +28,6 @@ WilsonClient.prototype._onSocketStatusUpdate = function (_update) {
 
     // Checking the socket
     this._state.update("socket", { status: _update.status });
-
-}
-
-WilsonClient.prototype._callEventListeners = function (event, payload) {
-
-    if (!this._events.includes(event)) return;
-    if (!this._eventListeners[this._events.indexOf(event)].length) return;
-
-    this._eventListeners[this._events.indexOf(event)].forEach(function (_listener) {
-        _listener(payload);
-    });
 
 }
 
@@ -58,12 +45,6 @@ WilsonClient.prototype._onSocketMessage = function (event) {
 
 }
 
-WilsonClient.prototype.on = function (event, cb) {
-    if (!event || !cb || typeof cb !== "function") return;
-    if (!this._events.includes(event)) return;
-    this._eventListeners[this._events.indexOf(event)].push(cb);
-}
-
 WilsonClient.prototype.authenticate = function (username, password) {
 
     const event = {
@@ -76,6 +57,10 @@ WilsonClient.prototype.authenticate = function (username, password) {
 
     this._socketHandler.send(JSON.stringify(event));
 
+}
+
+WilsonClient.prototype.on = function (event, cb) {
+    this._eventEmitter.on(event, cb);
 }
 
 WilsonClient.prototype.sendMessage = function (userTo, message) {

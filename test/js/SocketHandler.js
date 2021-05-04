@@ -91,7 +91,10 @@ SocketHandler.prototype._handleSocketOnClose = function (e) {
     // If the connection was unexpected, try to reconnect
     if (!e.reason || e.code === 1006) {
         this._retryConnection();
+        return;
     }
+
+    this._logger.error("Lost connection to live services: " + e.reason);
 
 }
 
