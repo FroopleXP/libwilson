@@ -1,5 +1,5 @@
 import EServerAction from "../enums/EServerAction"
-import IServerEvent from "../interfaces/IServerEvent"
+import IServerEvent from "../interfaces/events/IServerEvent"
 import IServerNewMessageEventPayload from "../interfaces/events/payloads/server/IServerNewMessageEventPayload";
 import IServerWelcomeEventPayload from "../interfaces/events/payloads/server/IServerWelcomeEventPayload"
 

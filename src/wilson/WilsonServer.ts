@@ -3,22 +3,14 @@ import { Server } from "ws";
 import WilsonClient from "./domain/entities/WilsonClient";
 import EClientAction from "./enums/EClientAction";
 import EServerAction from "./enums/EServerAction";
-import IClientAuthenticationEventPayload from "./interfaces/events/payloads/client/IClientAuthenticationEventPayload";
+import WilsonClientManager from "./impl/WilsonClientManager";
 import IClientMessageEventPayload from "./interfaces/events/payloads/client/IClientMessagePayload";
-import IClientRegisterEventPayload from "./interfaces/events/payloads/client/IClientRegsterEventPayload";
 import ClientEvent, { ClientMessageEvent } from "./types/ClientEvent";
-import ServerEvent, { ServerNewMessageEvent } from "./types/ServerEvent";
+import ServerEvent from "./types/ServerEvent";
 
 declare interface WilsonServer {
-
-    on(event: "authenticate", listener: (client: WilsonClient, payload: IClientAuthenticationEventPayload) => void): this;
     on(event: "message", listener: (client: WilsonClient, event: IClientMessageEventPayload) => void): this;
-    on(event: "register", listener: (client: WilsonClient, event: IClientRegisterEventPayload) => void): this;
-
-    emit(event: "authenticate", client: WilsonClient, payload: IClientAuthenticationEventPayload): boolean;
     emit(event: "message", client: WilsonClient, payload: IClientMessageEventPayload): boolean;
-    emit(event: "register", client: WilsonClient, payload: IClientRegisterEventPayload): boolean;
-
 }
 
 export interface IWilsonServerProps {
@@ -30,7 +22,7 @@ class WilsonServer extends EventEmitter {
 
     private readonly wss: Server;
     private readonly name: string;
-    private connectedClients: Map<string, WilsonClient>;
+    private clientManager: WilsonClientManager;
 
     constructor(deps: IWilsonServerProps) {
 
@@ -38,7 +30,7 @@ class WilsonServer extends EventEmitter {
 
         this.name = deps.name;
         this.wss = deps.server;
-        this.connectedClients = new Map<string, WilsonClient>();
+        this.clientManager = new WilsonClientManager();
 
         this.wss.on("connection", this.handleOnClientConnect.bind(this));
 
@@ -48,35 +40,20 @@ class WilsonServer extends EventEmitter {
 
         switch (event.action) {
 
-            case EClientAction.AUTHENTICATE_USER:
-                this.emit("authenticate", client, event.payload);
-                break;
-
             case EClientAction.NEW_MESSAGE:
                 this.handleClientMessageEvent(client, event);
                 break;
-
-            case EClientAction.REGISTER_USER:
-                this.emit("register", client, event.payload);
-                break;
-
         }
 
     }
 
     private handleClientMessageEvent(client: WilsonClient, event: ClientMessageEvent): void {
 
-        if (client.id === event.payload.to) {
-            console.log(`${client.id} are messaging themself, what a loser!`);
-        } else {
-            console.log(`New message from ${client.id} to ${event.payload.to}`);
-        }
-
         /*
             Check if the user is connected to this server, if so send the message
             otherwise send the message to the listener to send the message.
         */
-        const recipientClient: WilsonClient | undefined = this.connectedClients.get(event.payload.to);
+        const recipientClient: WilsonClient | undefined = this.clientManager.getClient(event.payload.to);
 
         if (!recipientClient) {
             this.emit("message", client, event.payload);
@@ -100,7 +77,8 @@ class WilsonServer extends EventEmitter {
         console.log(`Client ${client.id} has disconnected`)
 
         // When a client disconnects, remove them from the connectedClients map
-        this.connectedClients.delete(client.id);
+        // TODO: Perhaps pass a reference to the whole client obj.?
+        this.clientManager.removeClient(client.id);
 
     }
 
@@ -111,15 +89,14 @@ class WilsonServer extends EventEmitter {
         newClient.on("event", this.handleIncomingClientEvent.bind(this));
         newClient.on("close", this.handleOnClientDisconnect.bind(this));
 
-        this.connectedClients.set(newClient.id, newClient);
-
-        console.log("New connection from: " + newClient.id + "\n\tTotal clients: " + this.connectedClients.size);
+        this.clientManager.addClient(newClient);
 
         // On connect, send welcome message
         const serverWelcomeEvent: ServerEvent = {
             action: EServerAction.WELCOME,
             payload: {
-                server_name: this.name
+                server_name: this.name,
+                client_id: newClient.id
             }
         };
 
@@ -153,12 +130,12 @@ Wilson.
     }
 
     public isConnected(id: string): boolean {
-        return this.connectedClients.has(id);
+        return this.clientManager.clientExists(id);
     }
 
     public sendEventToClient(id: string, event: ServerEvent): void {
 
-        const client: WilsonClient | undefined = this.connectedClients.get(id);
+        const client: WilsonClient | undefined = this.clientManager.getClient(id);
 
         if (!client) throw new Error("User does not exist on this server. Call 'isConnected()' to check.");
 
