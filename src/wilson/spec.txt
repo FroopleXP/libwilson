@@ -33,3 +33,23 @@ const newMessageEvent: IClientEvent<IClientNewMessagePayload> = {
 }
 
 
+----------------------------------
+
+Features:
+    - 1 - 1 messaging
+
+User A wants to talk to user B
+
+User A sends 'NEW_CONVERSATION' event with user B as a participant to the server. 
+
+The server generates a new conversation with A + B as participants and user A as the initiator. 
+
+Server sends the new conversation to user B, which can then rejected or accepted.
+
+User B sends the 'NEW_CONVERSATION_ACK' event to the server with either 'ACCEPTED' or "REJECTED" in the payload
+as well as the id of the conversation they've accepted.
+
+The server then updates user B's session and adds the new conversation to their 'active_conversations'
+
+Any messages sent to to that conversation 
+

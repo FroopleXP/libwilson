@@ -25,10 +25,7 @@ const WilsonClient = function (serverUrl) {
 }
 
 WilsonClient.prototype._onSocketStatusUpdate = function (_update) {
-
-    // Checking the socket
     this._state.update("socket", { status: _update.status });
-
 }
 
 WilsonClient.prototype._onSocketMessage = function (event) {

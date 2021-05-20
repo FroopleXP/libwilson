@@ -109,7 +109,7 @@ async function getServerUUIDFromUsername(username: string): Promise<string> {
 
 async function registerUser(username: string): Promise<void> {
 
-    const key: string = `user:${username}`
+    const key: string = `user:${username}`;
 
     return new Promise((res, rej) => {
 
@@ -125,6 +125,16 @@ async function registerUser(username: string): Promise<void> {
     })
 
 }
+
+wilsonServer.on("authenticate", (client, payload) => {
+    console.log(`New authentication from ${client.id}, u:${payload.username}, p:${payload.password}`);
+});
+
+wilsonServer.on("message", (client, payload) => {
+
+
+
+});
 
 // --- Start server
 startServer();

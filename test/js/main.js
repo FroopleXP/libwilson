@@ -17,16 +17,7 @@ mockAuthButton.addEventListener("click", function (e) {
 
 body.appendChild(mockAuthButton);
 
-const mockMessageButton = document.createElement("button");
-mockMessageButton.innerText = "Send Message";
-mockMessageButton.type = "submit";
-mockMessageButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    wilsonClient.sendMessage("froople", "Hi there, are you online?");
-});
-
-body.appendChild(mockMessageButton);
-
+// -----------------
 const mockBadMessageButton = document.createElement("button");
 mockBadMessageButton.innerText = "Send BAD Message";
 mockBadMessageButton.type = "submit";
@@ -36,6 +27,21 @@ mockBadMessageButton.addEventListener("click", function (e) {
 });
 
 body.appendChild(mockBadMessageButton);
+
+// ----- Mock messaging
+const mockMessageFieldsetEl = document.createElement("fieldset");
+const mockMessageLegendEl = document.createElement("legend");
+const mockMessageFormEl = document.createElement("form");
+const mockMessageFormMessageInputEl = document.createElement("input");
+const mockMessageFormUserInputEl = document.createElement("input");
+const mockMessageFormSubmitButtonEl = document.createElement("button");
+
+mockMessageFormEl.on("submit", function (e) {
+    e.preventDefault();
+    wilsonClient.sendMessage(mockMessageFormUserInputEl.value, mockMessageFormMessageInputEl.value);
+});
+
+// -------
 
 statusBar.setRetryCallback(function (e) {
     console.log("What?")

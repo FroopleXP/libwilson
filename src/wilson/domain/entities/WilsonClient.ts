@@ -1,6 +1,5 @@
 import EventEmitter from "events";
 import { v4 as uuidv4 } from "uuid";
-import EClientAction from "../../enums/EClientAction";
 import jsonStringToClientEvent from "../../mappers/jsonStringToClientEvent";
 import ClientEvent from "../../types/ClientEvent";
 import ServerEvent from "../../types/ServerEvent";
@@ -15,10 +14,15 @@ class WilsonClient extends EventEmitter {
         super();
         this.id = uuidv4();
         this.socket = socket;
-        this.socket.onmessage = this.handleMessage.bind(this);
+        this.socket.onmessage = this.handleOnMessage.bind(this);
+        this.socket.onclose = this.handleOnClose.bind(this);
     }
 
-    private handleMessage(message: MessageEvent<string>): void {
+    private handleOnClose(): void {
+        this.emit("close", this);
+    }
+
+    private handleOnMessage(message: MessageEvent<string>): void {
         // Try to map the raw websocket message to a client event
         try {
 
