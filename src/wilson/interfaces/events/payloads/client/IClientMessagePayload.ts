@@ -1,6 +1,6 @@
 interface IClientMessageEventPayload {
-    message: string,
     to: string;
+    message: string
 }
 
 export default IClientMessageEventPayload;

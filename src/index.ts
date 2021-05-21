@@ -94,45 +94,14 @@ async function cleanup() {
 
 }
 
-async function getServerUUIDFromUsername(username: string): Promise<string> {
+/*
+    This is fired when the server attempts to send an event to a client
+    that is not connected this this instance. This should then be sent
+    via the 'backbone' to the client if they're connected to the network
+*/
+wilsonServer.on("undeliverable", (event) => {
 
-    const key: string = `user:${username}`;
-
-    return new Promise((res, rej) => {
-        redisClient.hget(key, "server_uuid", (err, _uuid) => {
-            if (err) return rej(err);
-            return res(_uuid);
-        })
-    })
-
-}
-
-async function registerUser(username: string): Promise<void> {
-
-    const key: string = `user:${username}`;
-
-    return new Promise((res, rej) => {
-
-        redisClient.exists(key, (err, exists) => {
-            if (err) return rej(err);
-            if (exists) return rej(new Error("User has already exists"))
-            redisClient.hmset(key, { "server_uuid": serverUuid }, (err) => {
-                if (err) return rej(err);
-                return res();
-            });
-        })
-
-    })
-
-}
-
-wilsonServer.on("authenticate", (client, payload) => {
-    console.log(`New authentication from ${client.id}, u:${payload.username}, p:${payload.password}`);
-});
-
-wilsonServer.on("message", (client, payload) => {
-
-
+    console.log(`Undeliverable event: ${event.action} to: ${event.to}`);
 
 });
 

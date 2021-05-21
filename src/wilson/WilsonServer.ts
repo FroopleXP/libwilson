@@ -4,13 +4,12 @@ import WilsonClient from "./domain/entities/WilsonClient";
 import EClientAction from "./enums/EClientAction";
 import EServerAction from "./enums/EServerAction";
 import WilsonClientManager from "./impl/WilsonClientManager";
-import IClientMessageEventPayload from "./interfaces/events/payloads/client/IClientMessagePayload";
 import ClientEvent, { ClientMessageEvent } from "./types/ClientEvent";
 import ServerEvent from "./types/ServerEvent";
 
 declare interface WilsonServer {
-    on(event: "message", listener: (client: WilsonClient, event: IClientMessageEventPayload) => void): this;
-    emit(event: "message", client: WilsonClient, payload: IClientMessageEventPayload): boolean;
+    on(event: "undeliverable", listener: (event: ServerEvent) => void): this;
+    emit(event: "undeliverable", payload: ServerEvent): boolean;
 }
 
 export interface IWilsonServerProps {
@@ -36,6 +35,9 @@ class WilsonServer extends EventEmitter {
 
     }
 
+    /*
+        All client sent events are processed here.
+    */
     private handleIncomingClientEvent(client: WilsonClient, event: ClientEvent): void {
 
         switch (event.action) {
@@ -51,21 +53,22 @@ class WilsonServer extends EventEmitter {
 
         /*
             Check if the user is connected to this server, if so send the message
-            otherwise send the message to the listener to send the message.
+            otherwise send the message to the listener of 'undeliverable'.
         */
         const recipientClient: WilsonClient | undefined = this.clientManager.getClient(event.payload.to);
 
-        if (!recipientClient) {
-            this.emit("message", client, event.payload);
-            return;
-        }
-
         const serverNewMessageEvent: ServerEvent = {
+            to: event.payload.to,
             action: EServerAction.NEW_MESSAGE,
             payload: {
                 message: event.payload.message,
                 from: client.id
             }
+        }
+
+        if (!recipientClient) {
+            this.emit("undeliverable", serverNewMessageEvent);
+            return;
         }
 
         recipientClient.sendEvent(serverNewMessageEvent);
@@ -93,6 +96,7 @@ class WilsonServer extends EventEmitter {
 
         // On connect, send welcome message
         const serverWelcomeEvent: ServerEvent = {
+            to: newClient.id,
             action: EServerAction.WELCOME,
             payload: {
                 server_name: this.name,
@@ -107,6 +111,7 @@ class WilsonServer extends EventEmitter {
             a message that will show in their inbox.
         */
         const welcomeMessage: ServerEvent = {
+            to: newClient.id,
             action: EServerAction.NEW_MESSAGE,
             payload: {
                 from: "Wilson",
@@ -115,7 +120,7 @@ Greetings!
 
 Wilson is an anonymous private messaging platform. Think of WhatsApp
 with UUID's instead of MSISDNs. We know nothing about you nor do we
-ever want to! Messages and contacts are store in your browser only
+ever want to! Messages and contacts are stored in your browser only
 and it's you that personally identifies each other user - we know
 nothing!
 
@@ -129,15 +134,14 @@ Wilson.
 
     }
 
-    public isConnected(id: string): boolean {
-        return this.clientManager.clientExists(id);
-    }
+    public sendEvent(event: ServerEvent): void {
 
-    public sendEventToClient(id: string, event: ServerEvent): void {
+        const client: WilsonClient | undefined = this.clientManager.getClient(event.to);
 
-        const client: WilsonClient | undefined = this.clientManager.getClient(id);
-
-        if (!client) throw new Error("User does not exist on this server. Call 'isConnected()' to check.");
+        if (!client) {
+            this.emit("undeliverable", event);
+            return;
+        }
 
         client.sendEvent(event);
 
