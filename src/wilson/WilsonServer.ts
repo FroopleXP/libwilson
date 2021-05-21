@@ -52,11 +52,10 @@ class WilsonServer extends EventEmitter {
     private handleClientMessageEvent(client: WilsonClient, event: ClientMessageEvent): void {
 
         /*
-            Check if the user is connected to this server, if so send the message
-            otherwise send the message to the listener of 'undeliverable'.
+            On a message event from the client, construct a server 'NEW_MESSAGE' 
+            event to be sent to the recipient client. Let 'sendEvent' handle the 
+            actual sending of the event.
         */
-        const recipientClient: WilsonClient | undefined = this.clientManager.getClient(event.payload.to);
-
         const serverNewMessageEvent: ServerEvent = {
             to: event.payload.to,
             action: EServerAction.NEW_MESSAGE,
@@ -66,12 +65,7 @@ class WilsonServer extends EventEmitter {
             }
         }
 
-        if (!recipientClient) {
-            this.emit("undeliverable", serverNewMessageEvent);
-            return;
-        }
-
-        recipientClient.sendEvent(serverNewMessageEvent);
+        this.sendEvent(serverNewMessageEvent);
 
     }
 
