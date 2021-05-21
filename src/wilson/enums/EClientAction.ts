@@ -1,7 +1,5 @@
 enum EClientAction {
-    NEW_MESSAGE = "NEW_MESSAGE",
-    AUTHENTICATE_USER = "AUTHENTICATE_USER",
-    REGISTER_USER = "REGISTER_USER",
+    NEW_MESSAGE = "NEW_MESSAGE"
 }
 
 export default EClientAction;
