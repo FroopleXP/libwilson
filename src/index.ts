@@ -3,7 +3,7 @@ import ws from "ws";
 import { v4 as uuidv4 } from "uuid";
 import amqplib from "amqplib";
 import { starWars, uniqueNamesGenerator } from "unique-names-generator";
-import WilsonServer from "./wilson/WilsonServer";
+import WilsonServer from "./wilson/impl/WilsonServer";
 
 const serverUuid: string = uuidv4();
 const serverName: string = uniqueNamesGenerator({ dictionaries: [starWars], length: 1 });

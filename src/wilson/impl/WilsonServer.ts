@@ -1,23 +1,19 @@
 import EventEmitter from "events";
 import { Server } from "ws";
-import WilsonClient from "./domain/entities/WilsonClient";
-import EClientAction from "./enums/EClientAction";
-import EServerAction from "./enums/EServerAction";
-import WilsonClientManager from "./impl/WilsonClientManager";
-import ClientEvent, { ClientMessageEvent } from "./types/ClientEvent";
-import ServerEvent from "./types/ServerEvent";
-
-declare interface WilsonServer {
-    on(event: "undeliverable", listener: (event: ServerEvent) => void): this;
-    emit(event: "undeliverable", payload: ServerEvent): boolean;
-}
+import WilsonClient from "../domain/entities/WilsonClient";
+import EClientAction from "../enums/EClientAction";
+import EServerAction from "../enums/EServerAction";
+import WilsonClientManager from "./WilsonClientManager";
+import ClientEvent, { ClientMessageEvent } from "../types/ClientEvent";
+import ServerEvent from "../types/ServerEvent";
+import IWilsonServer from "../interfaces/IWilsonServer";
 
 export interface IWilsonServerProps {
     server: Server,
     name: string
 }
 
-class WilsonServer extends EventEmitter {
+class WilsonServer extends EventEmitter implements IWilsonServer {
 
     private readonly wss: Server;
     private readonly name: string;
