@@ -1,21 +1,21 @@
 import { v4 as uuidv4 } from "uuid";
-
 import EventEmitter from "events";
 import { Server } from "ws";
-import WilsonClient from "../domain/entities/WilsonClient";
+import WilsonClient from "./WilsonClientSession";
 import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
-import WilsonClientManager from "./WilsonClientManager";
-import ClientEvent, { ClientMessageEvent, ClientNewConversationEvent } from "../types/ClientEvent";
+import WilsonClientManager from "./WilsonClientSessionManager";
+import ClientEvent, { ClientNewConversationInviteEvent } from "../types/ClientEvent";
 import ServerEvent from "../types/ServerEvent";
 import IWilsonServer from "../interfaces/IWilsonServer";
-import Conversation from "../interfaces/Conversation";
+import ConversationInvite from "../types/common/ConversationInvite";
 
 export interface IWilsonServerProps {
     server: Server,
     name: string
 }
 
+// TODO: Some of these events are for the client only, they don't need to be handled explicitly by the server
 class WilsonServer extends EventEmitter implements IWilsonServer {
 
     private readonly wss: Server;
@@ -39,11 +39,9 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
     */
     private handleIncomingClientEvent(client: WilsonClient, event: ClientEvent): void {
         switch (event.action) {
-            case EClientAction.NEW_MESSAGE:
-                this.handleClientMessageEvent(client, event);
-                break;
-            case EClientAction.NEW_CONVERSATION:
-                this.handleIncomingClientNewConversationEvent(client, event);
+
+            case EClientAction.NEW_CONVERSATION_INVITE:
+                this.handleIncomingClientNewConversationInviteEvent(client, event);
                 break;
 
             default:
@@ -52,31 +50,31 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
 
     }
 
-    /*
-        Client requests a new conversation
-    */
-    private handleIncomingClientNewConversationEvent(client: WilsonClient, event: ClientNewConversationEvent): void {
+    private handleIncomingClientNewConversationInviteEvent(client: WilsonClient, event: ClientNewConversationInviteEvent): void {
 
         if (!event.payload.participants) {
-            throw new Error("No participants in new conversation request");
+            throw new Error("No participants in new conversation invite request");
         }
 
-        const newConversation: Conversation = {
+        // Create an invite
+        const newConversationInvite: ConversationInvite = {
             id: uuidv4(),
-            participants: [...event.payload.participants, client.id]
+            conversation: {
+                id: uuidv4(),
+                participants: [...event.payload.participants, client.id]
+            }
         }
 
-        // For every participant, send the new conversation
+        // For every participant, send the new conversation invitation
         for (let i = 0; i < event.payload.participants.length; i++) {
 
             const participant: string = event.payload.participants[i];
 
             const newConversationRequest: ServerEvent = {
                 to: participant,
-                action: EServerAction.NEW_CONVERSATION,
+                action: EServerAction.NEW_CONVERSATION_INVITE,
                 payload: {
-                    conversation_id: newConversation.id,
-                    participants: newConversation.participants
+                    invite: newConversationInvite
                 }
             }
 
@@ -86,25 +84,25 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
 
     }
 
-    private handleClientMessageEvent(client: WilsonClient, event: ClientMessageEvent): void {
+    // private handleIncomingClientMessageEvent(client: WilsonClient, event: ClientMessageEvent): void {
 
-        /*
-            On a message event from the client, construct a server 'NEW_MESSAGE' 
-            event to be sent to the recipient client. Let 'sendEvent' handle the 
-            actual sending of the event.
-        */
-        const serverNewMessageEvent: ServerEvent = {
-            to: event.payload.to,
-            action: EServerAction.NEW_MESSAGE,
-            payload: {
-                message: event.payload.message,
-                from: client.id
-            }
-        }
+    //     /*
+    //         On a message event from the client, construct a server 'NEW_MESSAGE' 
+    //         event to be sent to the recipient client. Let 'sendEvent' handle the 
+    //         actual sending of the event.
+    //     */
+    //     const serverNewMessageEvent: ServerEvent = {
+    //         to: event.payload.to,
+    //         action: EServerAction.NEW_MESSAGE,
+    //         payload: {
+    //             message: event.payload.message,
+    //             from: client.id
+    //         }
+    //     }
 
-        this.sendEvent(serverNewMessageEvent);
+    //     this.sendEvent(serverNewMessageEvent);
 
-    }
+    // }
 
     private handleOnClientDisconnect(client: WilsonClient): void {
 
