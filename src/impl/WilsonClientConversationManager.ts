@@ -1,8 +1,8 @@
-import Logger from "../../logger/impl/Logger";
-import Conversation from "../types/common/Conversation";
+import Conversation from "../common/Conversation";
 import IWilsonClientConversationManager from "../interfaces/IWilsonClientConversationManager";
-import ConversationInviteID from "../types/common/ConversationInviteID";
-import ConversationInvite from "../types/common/ConversationInvite";
+import ConversationInviteID from "../common/ConversationInviteID";
+import ConversationInvite from "../common/ConversationInvite";
+import Logger from "@frooplexp/logger";
 
 class WilsonClientConversationManager implements IWilsonClientConversationManager {
 

@@ -4,11 +4,11 @@ import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientConversationManager from "./WilsonClientConversationManager";
 import jsonStringToClientEvent from "../mappers/jsonStringToClientEvent";
-import ClientEvent, { ClientNewConversationInviteAckEvent } from "../types/common/events/ClientEvent";
-import ConversationInviteID from "../types/common/ConversationInviteID";
-import ServerEvent, { ServerNewConversationInviteEvent } from "../types/common/events/ServerEvent";
+import ClientEvent, { ClientNewConversationInviteAckEvent } from "../common/events/ClientEvent";
+import ConversationInviteID from "../common/ConversationInviteID";
+import ServerEvent, { ServerNewConversationInviteEvent } from "../common/events/ServerEvent";
 import IWilsonClientSession from "../interfaces/IWilsonClientSession";
-import ConversationInvite from "../types/common/ConversationInvite";
+import ConversationInvite from "../common/ConversationInvite";
 
 class WilsonClientSession extends EventEmitter implements IWilsonClientSession {
 

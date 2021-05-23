@@ -15,7 +15,7 @@ export interface IWilsonServerProps {
     name: string
 }
 
-// TODO: Some of these events are for the client only, they don't need to be handled explicitly by the server
+
 class WilsonServer extends EventEmitter implements IWilsonServer {
 
     private readonly wss: Server;
