@@ -2,16 +2,16 @@ import Conversation from "../common/Conversation";
 import IWilsonClientConversationManager from "../interfaces/IWilsonClientConversationManager";
 import ConversationInviteID from "../common/ConversationInviteID";
 import ConversationInvite from "../common/ConversationInvite";
-import Logger from "@frooplexp/logger";
+// import Logger from "@frooplexp/logger";
 
 class WilsonClientConversationManager implements IWilsonClientConversationManager {
 
     private conversations: Conversation[];
     private invitations: Map<ConversationInviteID, Conversation>;
-    private logger: Logger;
+    // private logger: Logger;
 
     constructor() {
-        this.logger = new Logger("Wilson Client Conversation Manager", process.env.NODE_ENV === "development");
+        // this.logger = new Logger("Wilson Client Conversation Manager", process.env.NODE_ENV === "development");
         this.conversations = [];
         this.invitations = new Map<ConversationInviteID, Conversation>()
     }
@@ -28,7 +28,7 @@ class WilsonClientConversationManager implements IWilsonClientConversationManage
 
             // Check if we've accepted it or rejected it
             if (accept) {
-                this.logger.debug(`Invite ${conversationInviteId} accepted`);
+                // this.logger.debug(`Invite ${conversationInviteId} accepted`);
                 this.conversations.push(conversation);
             }
 
