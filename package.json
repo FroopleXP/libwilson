@@ -4,7 +4,7 @@
     "description": "Taking web sockets for a spin!",
     "main": "src/index.ts",
     "scripts": {
-        "start:dev": "ts-node-dev --watch --quiet src/index.ts",
+        "start:dev": "NODE_ENV=development ts-node-dev --watch --quiet src/index.ts",
         "start:web": "serve test"
     },
     "keywords": [],
@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "amqplib": "^0.7.1",
+        "chalk": "^4.1.1",
         "express": "^4.17.1",
         "redis": "^3.1.1",
         "unique-names-generator": "^4.4.0",
