@@ -19,13 +19,12 @@ class WilsonClientManager implements IWilsonClientManager {
 
     addClient(client: WilsonClient): void {
         this.clients.set(client.id, client);
+        console.log(`New client! ${client.id} | ${this.clients.size}`)
     }
 
     removeClient(uuid: string): void {
-        // TODO: It may be faster to just run the delete but an error may be thrown
-        if (uuid in this.clients) {
-            this.clients.delete(uuid);
-        }
+        this.clients.delete(uuid);
+        console.log(`Client ${uuid} has disconnected | ${this.clients.size}`)
     }
 
 }

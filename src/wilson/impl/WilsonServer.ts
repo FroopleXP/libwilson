@@ -1,12 +1,15 @@
+import { v4 as uuidv4 } from "uuid";
+
 import EventEmitter from "events";
 import { Server } from "ws";
 import WilsonClient from "../domain/entities/WilsonClient";
 import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientManager from "./WilsonClientManager";
-import ClientEvent, { ClientMessageEvent } from "../types/ClientEvent";
-import ServerEvent from "../types/ServerEvent";
+import ClientEvent, { ClientMessageEvent, ClientNewConversationEvent } from "../types/ClientEvent";
+import ServerEvent, { ServerNewConversationRequest } from "../types/ServerEvent";
 import IWilsonServer from "../interfaces/IWilsonServer";
+import Conversation from "../interfaces/Conversation";
 
 export interface IWilsonServerProps {
     server: Server,
@@ -35,12 +38,49 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
         All client sent events are processed here.
     */
     private handleIncomingClientEvent(client: WilsonClient, event: ClientEvent): void {
-
         switch (event.action) {
-
             case EClientAction.NEW_MESSAGE:
                 this.handleClientMessageEvent(client, event);
                 break;
+            case EClientAction.NEW_CONVERSATION:
+                this.handleIncomingClientNewConversationEvent(client, event);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /*
+        Client requests a new conversation
+    */
+    private handleIncomingClientNewConversationEvent(client: WilsonClient, event: ClientNewConversationEvent): void {
+
+        if (!event.payload.participants) {
+            throw new Error("No participants in new conversation request");
+        }
+
+        const newConversation: Conversation = {
+            id: uuidv4(),
+            participants: [...event.payload.participants, client.id]
+        }
+
+        // For every participant, send the new conversation
+        for (let i = 0; i < event.payload.participants.length; i++) {
+
+            const participant: string = event.payload.participants[i];
+
+            const newConversationRequest: ServerEvent = {
+                to: participant,
+                action: EServerAction.NEW_CONVERSATION_REQ,
+                payload: {
+                    conversation_id: newConversation.id,
+                    participants: newConversation.participants
+                }
+            }
+
+            this.sendEvent(newConversationRequest);
+
         }
 
     }
@@ -66,8 +106,6 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
     }
 
     private handleOnClientDisconnect(client: WilsonClient): void {
-
-        console.log(`Client ${client.id} has disconnected`)
 
         // When a client disconnects, remove them from the connectedClients map
         // TODO: Perhaps pass a reference to the whole client obj.?
@@ -106,7 +144,7 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
             payload: {
                 from: "Wilson",
                 message: `
-Greetings!
+Greetings, ${newClient.id}!
 
 Wilson is an anonymous private messaging platform. Think of WhatsApp
 with UUID's instead of MSISDNs. We know nothing about you nor do we

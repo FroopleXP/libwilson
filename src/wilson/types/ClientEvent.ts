@@ -1,13 +1,11 @@
 import EClientAction from "../enums/EClientAction";
-import IClientAuthenticationEventPayload from "../interfaces/events/payloads/client/IClientAuthenticationEventPayload";
 import IClientEvent from "../interfaces/events/IClientEvent";
+import ClientNewConversationPayload from "../interfaces/events/payloads/client/ClientNewConversationPayload";
 import IClientMessageEventPayload from "../interfaces/events/payloads/client/IClientMessagePayload";
-import IClientRegisterEventPayload from "../interfaces/events/payloads/client/IClientRegsterEventPayload";
 
-export type ClientAuthenticationEvent = IClientEvent<IClientAuthenticationEventPayload, EClientAction.AUTHENTICATE_USER>;
 export type ClientMessageEvent = IClientEvent<IClientMessageEventPayload, EClientAction.NEW_MESSAGE>;
-export type ClientRegisterEvent = IClientEvent<IClientRegisterEventPayload, EClientAction.REGISTER_USER>;
+export type ClientNewConversationEvent = IClientEvent<ClientNewConversationPayload, EClientAction.NEW_CONVERSATION>;
 
-type ClientEvent = ClientAuthenticationEvent | ClientMessageEvent | ClientRegisterEvent;
+type ClientEvent = ClientMessageEvent | ClientNewConversationEvent;
 
 export default ClientEvent;
