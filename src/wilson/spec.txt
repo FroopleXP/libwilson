@@ -35,21 +35,20 @@ const newMessageEvent: IClientEvent<IClientNewMessagePayload> = {
 
 ----------------------------------
 
-Features:
-    - 1 - 1 messaging
+Introducing conversations...
 
-User A wants to talk to user B
+Conversations can include multiple participants.
+All messages must be part of a conversation.
+A user an choose to opt. of receiving messages from a conversation.
 
-User A sends 'NEW_CONVERSATION' event with user B as a participant to the server. 
+User A wants to talk to B, C
 
-The server generates a new conversation with A + B as participants and user A as the initiator. 
+User A send 'NEW_CONVERSATION' event to to server with B, C as participants
 
-Server sends the new conversation to user B, which can then rejected or accepted.
+Server generates a 'NEW_CONVERSATION_REQUEST' event with A, B, C as participants
+and sends it to users B & C.
 
-User B sends the 'NEW_CONVERSATION_ACK' event to the server with either 'ACCEPTED' or "REJECTED" in the payload
-as well as the id of the conversation they've accepted.
-
-The server then updates user B's session and adds the new conversation to their 'active_conversations'
-
-Any messages sent to to that conversation 
-
+Once received, each user can then send a 'NEW_CONVERSATION_ACK' to the server.
+This includes the ID of the conversation they want to accept / reject. To start
+receving messages from this conversation, the user must accept. Their session record
+is then updated to allow messages from this conversation.
