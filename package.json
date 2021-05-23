@@ -3,9 +3,7 @@
     "version": "0.0.0",
     "description": "Wilson messaging",
     "main": "src/index.ts",
-    "scripts": {
-        "start:dev": "NODE_ENV=development ts-node-dev --watch --quiet src/index.ts"
-    },
+    "scripts": {},
     "keywords": [],
     "author": "Connor D. Edwards <connor@frooplexp.com>",
     "license": "MIT",
