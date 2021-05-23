@@ -2,7 +2,7 @@
 
 This is an experimental project used to show case an idea I had for a massively scalable messaging application.
 
-## Events
+## Events (WIP)
 
 Wilson is based on events sent over a websocket in JSON to the server.
 
