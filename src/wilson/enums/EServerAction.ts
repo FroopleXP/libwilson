@@ -1,7 +1,7 @@
 enum EServerAction {
     WELCOME = "WELCOME",
     NEW_MESSAGE = "NEW_MESSAGE",
-    NEW_CONVERSATION_REQ = "NEW_CONERSATION_REQ"
+    NEW_CONVERSATION = "NEW_CONVERSATION"
 }
 
 export default EServerAction;

@@ -45,6 +45,7 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
             case EClientAction.NEW_CONVERSATION:
                 this.handleIncomingClientNewConversationEvent(client, event);
                 break;
+
             default:
                 break;
         }
@@ -72,7 +73,7 @@ class WilsonServer extends EventEmitter implements IWilsonServer {
 
             const newConversationRequest: ServerEvent = {
                 to: participant,
-                action: EServerAction.NEW_CONVERSATION_REQ,
+                action: EServerAction.NEW_CONVERSATION,
                 payload: {
                     conversation_id: newConversation.id,
                     participants: newConversation.participants
