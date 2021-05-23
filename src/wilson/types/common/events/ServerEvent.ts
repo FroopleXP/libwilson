@@ -1,8 +1,8 @@
-import EServerAction from "../enums/EServerAction";
-import ServerNewConversationInviteEventPayload from "./common/events/payloads/server/ServerNewConversationInviteEventPayload";
-import ServerNewMessageEventPayload from "./common/events/payloads/server/ServerNewMessageEventPayload";
-import ServerWelcomeEventPayload from "./common/events/payloads/server/ServerWelcomeEventPayload";
-import IServerEvent from "./common/events/IServerEvent";
+import ServerNewConversationInviteEventPayload from "./payloads/server/ServerNewConversationInviteEventPayload";
+import ServerNewMessageEventPayload from "./payloads/server/ServerNewMessageEventPayload";
+import ServerWelcomeEventPayload from "./payloads/server/ServerWelcomeEventPayload";
+import IServerEvent from "./IServerEvent";
+import EServerAction from "../../../enums/EServerAction";
 
 export type ServerWelcomeEvent = IServerEvent<ServerWelcomeEventPayload, EServerAction.WELCOME>;
 export type ServerNewMessageEvent = IServerEvent<ServerNewMessageEventPayload, EServerAction.NEW_MESSAGE>;
