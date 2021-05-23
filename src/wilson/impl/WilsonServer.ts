@@ -7,7 +7,7 @@ import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientManager from "./WilsonClientManager";
 import ClientEvent, { ClientMessageEvent, ClientNewConversationEvent } from "../types/ClientEvent";
-import ServerEvent, { ServerNewConversationRequest } from "../types/ServerEvent";
+import ServerEvent from "../types/ServerEvent";
 import IWilsonServer from "../interfaces/IWilsonServer";
 import Conversation from "../interfaces/Conversation";
 
