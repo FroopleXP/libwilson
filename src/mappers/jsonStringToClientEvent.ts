@@ -1,5 +1,5 @@
+import ClientEvent from "../common/events/ClientEvent";
 import InvalidClientEventException from "../exceptions/InvalidClientEventException";
-import ClientEvent from "../types/common/events/ClientEvent";
 
 export default function jsonStringToClientEvent(json: string): ClientEvent {
 

@@ -1,4 +1,4 @@
-import ServerEvent from "../types/ServerEvent";
+import ServerEvent from "../common/events/ServerEvent";
 
 declare interface IWilsonServer {
     on(event: "undeliverable", listener: (event: ServerEvent) => void): this;

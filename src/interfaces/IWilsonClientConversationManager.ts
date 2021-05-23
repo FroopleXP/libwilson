@@ -1,6 +1,6 @@
-import ConversationInviteID from "../types/common/ConversationInviteID";
-import Conversation from "../types/common/Conversation";
-import ConversationInvite from "../types/common/ConversationInvite";
+import Conversation from "../common/Conversation";
+import ConversationInvite from "../common/ConversationInvite";
+import ConversationInviteID from "../common/ConversationInviteID";
 
 interface IWilsonClientConversationManager {
     addNewConversationInvite(conversationInvite: ConversationInvite): void;

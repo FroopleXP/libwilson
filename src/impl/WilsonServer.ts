@@ -5,10 +5,10 @@ import WilsonClient from "./WilsonClientSession";
 import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientManager from "./WilsonClientSessionManager";
-import ClientEvent, { ClientNewConversationInviteEvent } from "../types/common/events/ClientEvent";
-import ServerEvent from "../types/common/events/ServerEvent";
 import IWilsonServer from "../interfaces/IWilsonServer";
-import ConversationInvite from "../types/common/ConversationInvite";
+import ClientEvent, { ClientNewConversationInviteEvent } from "../common/events/ClientEvent";
+import ConversationInvite from "../common/ConversationInvite";
+import ServerEvent from "../common/events/ServerEvent";
 
 export interface IWilsonServerProps {
     server: Server,
