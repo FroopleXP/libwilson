@@ -4,9 +4,9 @@ import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientConversationManager from "./WilsonClientConversationManager";
 import jsonStringToClientEvent from "../mappers/jsonStringToClientEvent";
-import ClientEvent, { ClientNewConversationInviteAckEvent } from "../types/ClientEvent";
+import ClientEvent, { ClientNewConversationInviteAckEvent } from "../types/common/events/ClientEvent";
 import ConversationInviteID from "../types/common/ConversationInviteID";
-import ServerEvent, { ServerNewConversationInviteEvent } from "../types/ServerEvent";
+import ServerEvent, { ServerNewConversationInviteEvent } from "../types/common/events/ServerEvent";
 import IWilsonClientSession from "../interfaces/IWilsonClientSession";
 import ConversationInvite from "../types/common/ConversationInvite";
 

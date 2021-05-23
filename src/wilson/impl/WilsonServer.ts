@@ -5,8 +5,8 @@ import WilsonClient from "./WilsonClientSession";
 import EClientAction from "../enums/EClientAction";
 import EServerAction from "../enums/EServerAction";
 import WilsonClientManager from "./WilsonClientSessionManager";
-import ClientEvent, { ClientNewConversationInviteEvent } from "../types/ClientEvent";
-import ServerEvent from "../types/ServerEvent";
+import ClientEvent, { ClientNewConversationInviteEvent } from "../types/common/events/ClientEvent";
+import ServerEvent from "../types/common/events/ServerEvent";
 import IWilsonServer from "../interfaces/IWilsonServer";
 import ConversationInvite from "../types/common/ConversationInvite";
 

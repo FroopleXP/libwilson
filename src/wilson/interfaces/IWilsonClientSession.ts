@@ -1,5 +1,5 @@
-import ClientEvent from "../types/ClientEvent";
-import ServerEvent from "../types/ServerEvent";
+import ClientEvent from "../types/common/events/ClientEvent";
+import ServerEvent from "../types/common/events/ServerEvent";
 
 declare interface IWilsonClientSession {
     on(event: "event", listener: (event: ClientEvent) => void): this;
